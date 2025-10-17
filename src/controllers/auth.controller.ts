@@ -24,9 +24,25 @@ export const createUser = async (req: Request, res: Response) => {
 export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const user = await authService.longinUser(email, password);
+    const user = await authService.loginUser(email, password);
+    res.cookie("access_token", user.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
     return res.status(200).json(user);
   } catch (error) {
     return res.status(500).json({ message: error });
   }
+};
+
+export const logoutUser = (req: Request, res: Response) => {
+  res.clearCookie("access_token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  return res.status(200).json({ message: "Déconnecté" });
 };

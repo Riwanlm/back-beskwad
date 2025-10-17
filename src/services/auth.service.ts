@@ -25,7 +25,7 @@ export const createUser = async (
   return createdUserResponse;
 };
 
-export const longinUser = async (email: string, password: string) => {
+export const loginUser = async (email: string, password: string) => {
   const user = await authRepository.findUserByEmail(email);
 
   if (!user) {

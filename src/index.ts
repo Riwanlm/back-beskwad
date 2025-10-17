@@ -2,11 +2,13 @@ import express from "express";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import eventRoutes from "./routes/event.routes";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const PORT = process.env.APP_PORT || 3000;
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);

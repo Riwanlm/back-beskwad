@@ -5,6 +5,6 @@ const router = Router();
 
 router.post("/register", authController.createUser);
 router.post("/login", authController.loginUser);
-// router.get("/logout", TODO);
+router.get("/logout", authController.logoutUser);
 
 export default router;

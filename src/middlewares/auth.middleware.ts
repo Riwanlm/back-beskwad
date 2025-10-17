@@ -6,23 +6,23 @@ interface JwtPayload {
   email: string;
 }
 
-export const authentificateToken = (
+type RequestWithUser = Request & { user?: { id: number; email: string } };
+
+export const authMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = req.cookies.access_token;
 
-  if (!token) {
-    return res.status(403).json({ error: "Token manquant" });
+  if (!token) return res.status(401).json({ message: "Non authentifié" });
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET as string);
+    (req as RequestWithUser).user = payload as any;
+
+    return next();
+  } catch {
+    return res.status(401).json({ message: "Token invalide/expiré" });
   }
-
-  jwt.verify(token, process.env.JWT_SECRET as string, (error, decoded) => {
-    if (error) {
-      return res.status(403).json({ error: "Token invalidé" });
-    }
-    (req as any).user = decoded as JwtPayload;
-  });
-  next();
 };
