@@ -2,6 +2,15 @@ import { Request, Response } from "express";
 import * as authService from "../services/auth.service";
 import { CreateUserSchema } from "../validators/user.schema";
 
+interface RequestWithUser extends Request {
+  user?: {
+    id: number;
+    email: string;
+    username: string;
+    created_at: string;
+  };
+}
+
 export const createUser = async (req: Request, res: Response) => {
   const parseResult = CreateUserSchema.safeParse(req.body);
   if (parseResult.error) {
@@ -45,4 +54,17 @@ export const logoutUser = (req: Request, res: Response) => {
   });
 
   return res.status(200).json({ message: "Déconnecté" });
+};
+
+export const checkAuth = (req: Request, res: Response) => {
+  const userReq = req as RequestWithUser;
+
+  if (!userReq.user) {
+    return res.status(401).json({ message: "Utilisateur non authentifié" });
+  }
+
+  return res.status(200).json({
+    message: "Utilisateur connecté",
+    user: userReq.user,
+  });
 };
