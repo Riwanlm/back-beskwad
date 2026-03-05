@@ -1,9 +1,12 @@
 import { z } from "zod";
 
 export const CreateUserSchema = z.object({
-  username: z
+  firstName: z
     .string()
-    .min(3, "Le nom est requis avec un minimum de 3 caractères"),
+    .min(2, "Le nom est requis avec un minimum de 3 caractères"),
+  lastName: z
+    .string()
+    .min(2, "Le nom est requis avec un minimum de 3 caractères"),
   email: z.email("L'email doit être valide"),
   password: z
     .string()

@@ -3,9 +3,10 @@ import * as authRepository from "../repositories/auth.repository";
 import jwt from "jsonwebtoken";
 
 export const createUser = async (
-  username: string,
+  firstName: string,
+  lastName: string,
   email: string,
-  password: string
+  password: string,
 ) => {
   const existingUser = await authRepository.findUserByEmail(email);
   if (existingUser) {
@@ -14,9 +15,10 @@ export const createUser = async (
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const createUser = await authRepository.createUser(
-    username,
+    firstName,
+    lastName,
     email,
-    hashedPassword
+    hashedPassword,
   );
   const createdUserResponse = {
     ...createUser,
@@ -42,11 +44,12 @@ export const loginUser = async (email: string, password: string) => {
     {
       id: Number(user.id),
       email: user.email,
-      username: user.username,
+      firstName: user.first_name,
+      lastName: user.last_name,
       created_at: user.created_at,
     },
     process.env.JWT_SECRET as string,
-    { expiresIn: "24h" }
+    { expiresIn: "24h" },
   );
 
   const userWithToken = {
@@ -54,7 +57,8 @@ export const loginUser = async (email: string, password: string) => {
     user: {
       id: Number(user.id),
       email: user.email,
-      username: user.username,
+      firstName: user.first_name,
+      lastName: user.last_name,
       created_at: user.created_at,
     },
   };

@@ -20,13 +20,20 @@ export const createUser = async (req: Request, res: Response) => {
       details: parseResult.error.message,
     });
   }
-  const { username, email, password } = parseResult.data;
+  const { firstName, lastName, email, password } = parseResult.data;
   try {
-    const createdUser = await authService.createUser(username, email, password);
+    const createdUser = await authService.createUser(
+      firstName,
+      lastName,
+      email,
+      password,
+    );
     return res.status(201).json(createdUser);
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Erreur serveur";
     console.error(error);
-    return res.status(500).json({ message: "Erreur serveur" });
+    return res.status(500).json({ message: errorMessage });
   }
 };
 
